@@ -25,6 +25,7 @@ use warnings;
 use Config::IniFiles;
 use MIME::Base64;
 use Crypt::CBC;
+use utf8;
 
 Xchat::register('dumfish', '0.1', 'Plugin for DUM encrytion');
 
@@ -206,7 +207,7 @@ sub decrypt_message {
 	my $prepend=get_config("cryptprepend");
 	
 	$servermessage =~ s/\Q$ciphertext\E/$prepend$plaintext/;
-	
+	utf8::decode($servermessage);
 	Xchat::command("RECV ".$servermessage);
 	
 	return Xchat::EAT_ALL;
@@ -265,3 +266,4 @@ sub rm_newlines {
 	$line =~ s/\R//g;
 	return $line;
 }
+
