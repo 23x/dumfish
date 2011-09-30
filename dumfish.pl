@@ -38,11 +38,48 @@ Xchat::hook_command("MASTERPW",'set_masterpw');
 Xchat::hook_command("SETKEY",'set_key');
 Xchat::hook_command("GETKEY",'get_key');
 Xchat::hook_command("DELKEY",'del_key');
+Xchat::hook_command("CRYPTPREPEND",'set_cryptprepend');
 
 dum_print("loaded");
 
+sub set_cryptprepend {
+	if(!$masterpw){
+		dum_print("lrn2setmasterpassword");
+		return;
+	}
+	if(!$_[0][1]){
+		dum_print("lrn2usage: /CRYPTPREPEND <prefix>");
+		return;
+	}
+	if(set_config('cryptprepend',$_[0][1])){
+		dum_print("prefix set");
+	}else{
+		dum_print("couldn't set prefix");
+	}
+}
+
 sub get_config_path {
 	return Xchat::get_info('xchatdir')."/blow.ini";
+}
+
+sub get_config {
+	if(!$masterpw){
+		dum_print("lrn2setmasterpassword");
+		return;
+	}
+	return dum_decrypt($cfg->val( 'slimfish', $_[0] ),$masterpw);
+}
+
+sub set_config {
+	if(!$masterpw){
+		dum_print("lrn2setmasterpassword");
+		return;
+	}
+	$cfg->newval('slimfish',$_[0],dum_encrypt($_[1],$masterpw));
+	if($cfg->WriteConfig(get_config_path())){
+		return 1;
+	}
+	return 0;
 }
 
 sub get_key {
