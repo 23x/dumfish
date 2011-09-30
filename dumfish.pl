@@ -67,7 +67,8 @@ sub get_config {
 		dum_print("lrn2setmasterpassword");
 		return;
 	}
-	return dum_decrypt($cfg->val( 'slimfish', $_[0] ),$masterpw);
+	my $config = dum_decrypt($cfg->val( 'slimfish', $_[0] ),$masterpw);
+	return $config?$config:"";
 }
 
 sub set_config {
@@ -157,7 +158,9 @@ sub decrypt_message {
 	
 	my $plaintext=dum_decrypt($ciphertext,get_dumkey ($recp));
 	
-	$servermessage =~ s/\Q$ciphertext\E/\Q$plaintext\E/;
+	my $prepend=get_config("cryptprepend");
+	
+	$servermessage =~ s/\Q$ciphertext\E/$prepend$plaintext/;
 	
 	Xchat::command("RECV ".$servermessage);
 	
@@ -168,9 +171,11 @@ sub encrypt_message {
 	my $recp=Xchat::get_info('channel');
 	my $mynick=Xchat::get_info('nick');
 	my $msg=$_[1][0];
-
+	
+	my $prepend=get_config("cryptprepend");
+	
 	Xchat::command("PRIVMSG ".$recp." ".dum_encrypt($msg,get_dumkey($recp)));
-	Xchat::emit_print('Your Message',$mynick,$msg);
+	Xchat::emit_print('Your Message',$mynick,$prepend.$msg);
 	
 	return Xchat::EAT_ALL;
 }
