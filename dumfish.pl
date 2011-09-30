@@ -109,10 +109,6 @@ sub set_config {
 }
 
 sub set_ini {
-	if(!$masterpw){
-		dum_print("lrn2setmasterpassword");
-		return;
-	}
 	$cfg->newval($_[0],$_[1],dum_encrypt($_[2],$masterpw));
 	if($cfg->WriteConfig(get_config_path())){
 		return 1;
@@ -121,10 +117,6 @@ sub set_ini {
 }
 
 sub get_ini {
-	if(!$masterpw){
-		dum_print("lrn2setmasterpassword");
-		return;
-	}
 	my $config = dum_decrypt($cfg->val( $_[0], $_[1] ),$masterpw);
 	return $config?$config:"";
 }
@@ -201,6 +193,7 @@ sub decrypt_message {
 	my $recp=$_[0][2];
 	
 	return Xchat::EAT_NONE unless is_dum($ciphertext);
+	return Xchat::EAT_NONE if !$masterpw;
 	
 	my $plaintext=dum_decrypt($ciphertext,get_dumkey ($recp));
 	
@@ -218,7 +211,9 @@ sub encrypt_message {
 	my $mynick=Xchat::get_info('nick');
 	my $msg=$_[1][0];
 	
-	return if get_ini($recp,'enabled') eq "off";
+	return Xchat::EAT_NONE if get_ini($recp,'enabled') eq "off";
+	return Xchat::EAT_NONE if !get_ini($recp,'dumkey');
+	return Xchat::EAT_NONE if !$masterpw;
 	
 	my $prepend=get_config("cryptprepend");
 	
