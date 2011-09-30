@@ -1,0 +1,4 @@
+You need the following packages (on debian):
+libconfig-inifiles-perl
+libcrypt-blowfish-perl
+libcrypt-cbc-perl
