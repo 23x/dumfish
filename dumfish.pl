@@ -39,8 +39,32 @@ Xchat::hook_command("SETKEY",'set_key');
 Xchat::hook_command("GETKEY",'get_key');
 Xchat::hook_command("DELKEY",'del_key');
 Xchat::hook_command("CRYPTPREPEND",'set_cryptprepend');
+Xchat::hook_command("ENC",'set_enc');
 
 dum_print("loaded");
+
+sub set_enc {
+	if(!$masterpw){
+		dum_print("lrn2setmasterpassword");
+		return;
+	}
+	my $nick;
+	my $setting;
+	if(!$_[0][2]){
+		$nick=Xchat::get_info('channel');
+		$setting=$_[0][1];
+	}else{
+		$nick=$_[0][1];
+		$setting=$_[0][2];
+	}
+	
+	if($setting eq "on" or $setting eq "off"){
+		set_ini($nick,"enabled",$setting);
+		dum_print("Encryption for ".$nick." set to: ".$setting);
+		return;
+	}
+	dum_print("lrn2usage: /ENC <channel?> <on/off>");
+}
 
 sub set_cryptprepend {
 	if(!$masterpw){
@@ -81,6 +105,27 @@ sub set_config {
 		return 1;
 	}
 	return 0;
+}
+
+sub set_ini {
+	if(!$masterpw){
+		dum_print("lrn2setmasterpassword");
+		return;
+	}
+	$cfg->newval($_[0],$_[1],dum_encrypt($_[2],$masterpw));
+	if($cfg->WriteConfig(get_config_path())){
+		return 1;
+	}
+	return 0;
+}
+
+sub get_ini {
+	if(!$masterpw){
+		dum_print("lrn2setmasterpassword");
+		return;
+	}
+	my $config = dum_decrypt($cfg->val( $_[0], $_[1] ),$masterpw);
+	return $config?$config:"";
 }
 
 sub get_key {
@@ -171,6 +216,8 @@ sub encrypt_message {
 	my $recp=Xchat::get_info('channel');
 	my $mynick=Xchat::get_info('nick');
 	my $msg=$_[1][0];
+	
+	return if get_ini($recp,'enabled') eq "off";
 	
 	my $prepend=get_config("cryptprepend");
 	
