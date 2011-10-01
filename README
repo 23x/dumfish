@@ -2,3 +2,13 @@ You need the following packages (on debian):
 libconfig-inifiles-perl
 libcrypt-blowfish-perl
 libcrypt-cbc-perl
+
+For Windows with ActivePerl you can find the packages here:
+http://www.bribes.org/perl/ppm/
+just ppm install http://path/to.ppd on a command line.
+You need:
+Crypt-CBC
+Crypt-Blowfish
+Config-IniFiles
+
+maybe you need to patch the sourcecode too. feel free to send me a patch. I will happily ignore it.
