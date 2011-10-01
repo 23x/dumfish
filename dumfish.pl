@@ -174,13 +174,17 @@ sub decrypt_message {
 	my $servermessage=$_[1][0];
 	my $ciphertext=$_[1][3];
 	my $recp=$_[0][2];
+	$recp=get_sender($_[0][0]) unless is_channel($recp);
 	
 	return Xchat::EAT_NONE unless is_dum($ciphertext);
 	return Xchat::EAT_NONE if !$masterpw;
 	
+	
 	my $plaintext=dum_decrypt($ciphertext,get_dumkey ($recp));
 	
 	my $prepend=get_config("cryptprepend");
+	
+	dum_print("Cipher: $ciphertext Recp: $recp Plain: $plaintext") if $debug;
 	
 	$servermessage =~ s/\Q$ciphertext\E/$prepend$plaintext/;
 	utf8::decode($servermessage);
@@ -233,6 +237,18 @@ sub dum_encrypt {
 
 sub is_dum {
 	return index($_[0],"+DUM")!=-1?1:0;
+}
+
+sub is_channel {
+	return index($_[0],"#")!=-1?1:0;
+}
+
+sub get_sender {
+	my $s=$_[0];
+	if($s=~m/:(.*?)!/){
+		return $1;
+	}
+	return 0;
 }
 
 sub dum_print {
