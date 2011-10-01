@@ -46,10 +46,7 @@ Xchat::hook_command("ENC",'set_enc');
 dum_print("loaded");
 
 sub set_enc {
-	if(!$masterpw){
-		dum_print("lrn2setmasterpassword");
-		return;
-	}
+	return unless masterpw_check();
 	my $nick;
 	my $setting;
 	if(!$_[0][2]){
@@ -69,10 +66,7 @@ sub set_enc {
 }
 
 sub set_cryptprepend {
-	if(!$masterpw){
-		dum_print("lrn2setmasterpassword");
-		return;
-	}
+	return unless masterpw_check();
 	if(!$_[0][1]){
 		dum_print("lrn2usage: /CRYPTPREPEND <prefix>");
 		return;
@@ -89,19 +83,13 @@ sub get_config_path {
 }
 
 sub get_config {
-	if(!$masterpw){
-		dum_print("lrn2setmasterpassword");
-		return;
-	}
+	return unless masterpw_check();
 	my $config = dum_decrypt($cfg->val( 'slimfish', $_[0] ),$masterpw);
 	return $config?$config:"";
 }
 
 sub set_config {
-	if(!$masterpw){
-		dum_print("lrn2setmasterpassword");
-		return;
-	}
+	return unless masterpw_check();
 	$cfg->newval('slimfish',$_[0],dum_encrypt($_[1],$masterpw));
 	if($cfg->WriteConfig(get_config_path())){
 		return 1;
@@ -123,10 +111,7 @@ sub get_ini {
 }
 
 sub get_key {
-	if(!$masterpw){
-		dum_print("lrn2setmasterpassword");
-		return;
-	}
+	return unless masterpw_check();
 	my $nick;
 	if(!$_[0][1]){
 		$nick=Xchat::get_info('channel');
@@ -142,10 +127,7 @@ sub get_key {
 }
 
 sub set_key {
-	if(!$masterpw){
-		dum_print("lrn2setmasterpassword");
-		return;
-	}
+	return unless masterpw_check();
 	my $nick;
 	my $pass;
 	if(!$_[0][2]){
@@ -272,4 +254,12 @@ sub touch_ini { # Work around stupidness of Config::IniFile
 		print MYFILE "dum=dum\n";
 		close (MYFILE); 
 	} 
+}
+
+sub masterpw_check{
+	if(!$masterpw){
+		dum_print("lrn2setmasterpassword: /MASTERPW <yourpassword>");
+		return 0;
+	}
+	return 1;
 }
