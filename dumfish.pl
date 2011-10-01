@@ -27,7 +27,8 @@ use MIME::Base64;
 use Crypt::CBC;
 use utf8;
 
-Xchat::register('dumfish', '0.1', 'Plugin for DUM encrytion');
+Xchat::register('dumfish', '0.2', 'Plugin for DUM encrytion');
+touch_ini();
 
 my $debug=1;
 my $cfg = Config::IniFiles->new( -file => get_config_path() );
@@ -262,3 +263,13 @@ sub rm_newlines {
 	return $line;
 }
 
+sub touch_ini { # Work around stupidness of Config::IniFile
+	my $ini=get_config_path();
+	unless (-e $ini){
+		dum_print("No blow.ini found, first use? Nvm i created it for you.");
+		open (MYFILE, ">".$ini);
+		print MYFILE "[dum]\n";
+		print MYFILE "dum=dum\n";
+		close (MYFILE); 
+	} 
+}
