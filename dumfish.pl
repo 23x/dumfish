@@ -139,10 +139,10 @@ sub set_key {
 	}
 	$cfg->newval($nick,'dumkey',dum_encrypt($pass,$masterpw));
 	if($cfg->WriteConfig(get_config_path())){
-		dum_print("Key for ".$nick." safed");
+		dum_print("Key for ".$nick." saved");
 		return;
 	}
-	dum_print("Couldn't safe key.");
+	dum_print("Couldn't save key.");
 }
 
 
