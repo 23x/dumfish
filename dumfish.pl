@@ -1,5 +1,4 @@
 #!/usr/bin/perl
-#  Copyright (c) 2011 NIN101 <NIN101@lavabit.com>
 #  Copyright (c) 2011 lawl
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
