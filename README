@@ -1,3 +1,6 @@
+# THIS SOFTWARE IS PROBABLY NOT SECURE, DO NOT USE FOR ANYTHING SERIOUS!
+# I PERSONALLY DO HOWEVER NOT KNOW OF ANY SECURITY BUGS
+
 You need the following packages (on debian):
 libconfig-inifiles-perl
 libcrypt-blowfish-perl
